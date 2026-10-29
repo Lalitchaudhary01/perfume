@@ -12,6 +12,7 @@ import {
   X,
   Compass,
   ArrowRight,
+  Globe,
 } from "lucide-react";
 
 export default function Navigation() {
@@ -44,10 +45,27 @@ export default function Navigation() {
   return (
     <>
       {/* Top Luxury Announcement Bar */}
-      <div className="bg-[#171513] text-[#F7F0E6] text-[11px] font-mono-luxury py-2 px-4 text-center tracking-[0.2em] uppercase relative z-50">
+      <div className="bg-[#171513] text-[#F7F0E6] text-[10px] sm:text-[11px] font-mono-luxury py-2 px-3 sm:px-4 tracking-[0.16em] sm:tracking-[0.2em] uppercase relative z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Mobile Display: Globe on Left | Compass on Right */}
+          <div className="flex md:hidden items-center justify-between w-full">
+            <div className="flex items-center gap-1.5 text-[#EFE4D4]">
+              <Globe className="w-3 h-3 text-[#B9956B]" />
+              <span className="text-[8.5px] sm:text-[9.5px] tracking-wider truncate">COMPLIMENTARY WORLDWIDE DELIVERY</span>
+            </div>
+            <div className="h-3 w-[1px] bg-[#B9956B]/40 mx-2" />
+            <button
+              onClick={() => setIsScentFinderOpen(true)}
+              className="flex items-center gap-1 text-[#B9956B] hover:text-[#FFFFFF] transition-colors whitespace-nowrap text-[8.5px] sm:text-[9.5px]"
+            >
+              <Compass className="w-3 h-3" />
+              <span>FIND YOUR SCENT</span>
+            </button>
+          </div>
+
+          {/* Desktop Display */}
           <span className="hidden md:inline text-[#B9956B]">SLOW PERFUMERY ART</span>
-          <span className="mx-auto md:mx-0">
+          <span className="hidden md:inline mx-auto">
             COMPLIMENTARY WORLDWIDE DELIVERY · EACH ORDER INCLUDES KRAFT CASE
           </span>
           <button
@@ -79,44 +97,78 @@ export default function Navigation() {
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Left Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-9">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`font-sans-luxury text-[13px] tracking-[0.16em] uppercase transition-colors relative py-1 ${
-                    isActive
-                      ? "text-espresso font-semibold"
-                      : "text-[#624D3E] hover:text-espresso"
-                  }`}
-                >
-                  {link.name}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-champagne" />
-                  )}
-                </Link>
-              );
-            })}
+          {/* Left Navigation Links (Desktop: Shop All, Fragrances) */}
+          <nav className="hidden lg:flex items-center gap-8">
+            <Link
+              href="/shop"
+              className={`font-sans-luxury text-[13px] tracking-[0.18em] uppercase transition-colors relative py-1 ${
+                pathname === "/shop"
+                  ? "text-espresso font-semibold"
+                  : "text-[#624D3E] hover:text-espresso"
+              }`}
+            >
+              Shop All
+              {pathname === "/shop" && (
+                <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-champagne" />
+              )}
+            </Link>
+            <Link
+              href="/#collection"
+              className={`font-sans-luxury text-[13px] tracking-[0.18em] uppercase transition-colors relative py-1 ${
+                pathname === "/#collection"
+                  ? "text-espresso font-semibold"
+                  : "text-[#624D3E] hover:text-espresso"
+              }`}
+            >
+              Fragrances
+            </Link>
           </nav>
 
-          {/* Center Brand Wordmark (Always crisp and single-line on mobile) */}
+          {/* Center Brand Wordmark */}
           <Link
             href="/"
             className="flex flex-col items-center text-center group transition-transform duration-300 hover:scale-[1.01] px-1 sm:px-2"
           >
-            <span className="font-serif-luxury text-[17px] sm:text-2xl lg:text-[2rem] tracking-[0.15em] sm:tracking-[0.18em] uppercase text-espresso font-normal whitespace-nowrap leading-tight">
+            <span className="font-serif-luxury text-[18px] sm:text-2xl lg:text-[2rem] tracking-[0.16em] uppercase text-espresso font-normal whitespace-nowrap leading-tight">
               MAISON KIYORA
             </span>
-            <span className="font-mono-luxury text-[8px] sm:text-[9px] tracking-[0.22em] sm:tracking-[0.38em] uppercase text-champagne-dark mt-[-1px] group-hover:text-espresso transition-colors whitespace-nowrap">
+            <span className="font-mono-luxury text-[8px] sm:text-[9px] tracking-[0.26em] sm:tracking-[0.38em] uppercase text-champagne-dark mt-[-1px] group-hover:text-espresso transition-colors whitespace-nowrap">
               Slow Perfumery Art
             </span>
           </Link>
 
-          {/* Right Action Icons */}
-          <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-5">
+          {/* Right Links & Action Icons (Desktop: Our Philosophy, Contact + Icons) */}
+          <div className="flex items-center gap-2 sm:gap-4 lg:gap-7">
+            {/* Desktop Navigation Links (Right) */}
+            <nav className="hidden lg:flex items-center gap-8">
+              <Link
+                href="/philosophy"
+                className={`font-sans-luxury text-[13px] tracking-[0.18em] uppercase transition-colors relative py-1 ${
+                  pathname === "/philosophy"
+                    ? "text-espresso font-semibold"
+                    : "text-[#624D3E] hover:text-espresso"
+                }`}
+              >
+                Our Philosophy
+                {pathname === "/philosophy" && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-champagne" />
+                )}
+              </Link>
+              <Link
+                href="/contact"
+                className={`font-sans-luxury text-[13px] tracking-[0.18em] uppercase transition-colors relative py-1 ${
+                  pathname === "/contact"
+                    ? "text-espresso font-semibold"
+                    : "text-[#624D3E] hover:text-espresso"
+                }`}
+              >
+                Contact
+                {pathname === "/contact" && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-champagne" />
+                )}
+              </Link>
+            </nav>
+
             {/* Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -126,31 +178,35 @@ export default function Navigation() {
               <Search className="w-4 h-4" />
             </button>
 
-            {/* Account (hidden on xs mobile to give maximum room to center logo, accessible in drawer) */}
+            {/* Account */}
             <button
               onClick={() => setIsAccountOpen(!isAccountOpen)}
-              className="hidden sm:block p-2 text-espresso hover:text-champagne transition-colors relative"
+              className="hidden sm:block p-1.5 sm:p-2 text-espresso hover:text-champagne transition-colors relative"
               aria-label="Client account"
             >
               <User className="w-4 h-4" />
             </button>
 
-            {/* Shopping Bag Button */}
+            {/* Shopping Bag Button: Circular badge on mobile, pill on desktop matching reference images */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="group flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#EFE3D3] hover:bg-beige border border-champagne-subtle transition-all"
+              className="relative p-1.5 sm:hidden text-espresso hover:text-champagne transition-colors"
               aria-label="View shopping bag"
             >
-              <div className="relative">
-                <ShoppingBag className="w-4 h-4 text-espresso group-hover:text-champagne-dark transition-colors" />
-                {totalCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-espresso text-cream font-mono-luxury text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                    {totalCount}
-                  </span>
-                )}
-              </div>
-              <span className="hidden sm:inline font-mono-luxury text-xs text-espresso font-medium">
-                BAG {totalCount > 0 && `(${totalCount})`}
+              <ShoppingBag className="w-5 h-5 text-espresso" />
+              <span className="absolute -top-0.5 -right-0.5 bg-[#2E241D] text-[#FAF5EE] text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-mono-luxury font-medium shadow-xs">
+                {totalCount}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="hidden sm:flex group items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-[#EFE3D3]/80 hover:bg-beige border border-champagne-subtle transition-all"
+              aria-label="View shopping bag"
+            >
+              <ShoppingBag className="w-3.5 h-3.5 text-espresso group-hover:text-champagne-dark transition-colors" />
+              <span className="font-mono-luxury text-xs text-espresso font-medium uppercase tracking-wider">
+                BAG ({totalCount})
               </span>
             </button>
           </div>
