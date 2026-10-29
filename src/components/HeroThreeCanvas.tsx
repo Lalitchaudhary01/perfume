@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FRAGRANCES, Fragrance } from "@/data/fragrances";
@@ -10,16 +10,18 @@ import {
   Eye,
   ShoppingBag,
   Compass,
-  ArrowUpRight,
+  Wind,
 } from "lucide-react";
 
 export default function HeroThreeCanvas() {
   const [selectedFragrance, setSelectedFragrance] = useState<Fragrance>(FRAGRANCES[0]);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const [isSpraying, setIsSpraying] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mistCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const { addToCart, setIsScentFinderOpen } = useCart();
 
@@ -27,8 +29,8 @@ export default function HeroThreeCanvas() {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 8; // -4 to 4 deg
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -8; // -4 to 4 deg
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 10; // -5 to 5 deg
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -10; // -5 to 5 deg
     setMousePos({ x, y });
   };
 
@@ -36,6 +38,89 @@ export default function HeroThreeCanvas() {
     setMousePos({ x: 0, y: 0 });
     setIsHovered(false);
   };
+
+  // Interactive Atomizer Spray burst
+  const handleSpray = () => {
+    setIsSpraying(true);
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play();
+    }
+    setTimeout(() => setIsSpraying(false), 1200);
+  };
+
+  // Live Code-Generated Particle Mist Overlay (gives the video a real living code feel)
+  useEffect(() => {
+    const canvas = mistCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let width = (canvas.width = canvas.offsetWidth);
+    let height = (canvas.height = canvas.offsetHeight);
+
+    const particles: Array<{
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      size: number;
+      alpha: number;
+      maxAlpha: number;
+    }> = [];
+
+    for (let i = 0; i < 65; i++) {
+      particles.push({
+        x: width / 2 + (Math.random() - 0.5) * 180,
+        y: height * 0.28 + Math.random() * 220,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: -0.4 - Math.random() * 0.8,
+        size: 1 + Math.random() * 2.5,
+        alpha: Math.random() * 0.8,
+        maxAlpha: 0.4 + Math.random() * 0.5,
+      });
+    }
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      particles.forEach((p) => {
+        p.x += p.vx + Math.sin(Date.now() * 0.002 + p.y) * 0.3;
+        p.y += p.vy;
+        p.alpha -= 0.003;
+
+        if (p.alpha <= 0 || p.y < 40) {
+          p.x = width / 2 + (Math.random() - 0.5) * 120;
+          p.y = height * 0.38 + Math.random() * 60;
+          p.alpha = p.maxAlpha;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(225, 178, 105, ${Math.max(0, p.alpha)})`;
+        ctx.shadowColor = "#B9956B";
+        ctx.shadowBlur = 8;
+        ctx.fill();
+      });
+
+      animId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    const onResize = () => {
+      if (!canvas) return;
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   const isVideoMode = selectedFragrance.slug === "mandarin-melons";
 
@@ -105,18 +190,19 @@ export default function HeroThreeCanvas() {
           </div>
         </div>
 
-        {/* Center: The Seamless Flacon with Feathered Edges & Layered Typography */}
+        {/* Center: The Seamless Flacon (Zero hard edges, feathered mask-image) */}
         <div
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={handleMouseLeave}
-          className="lg:col-span-5 h-[560px] sm:h-[660px] lg:h-[740px] relative flex items-center justify-center order-1 lg:order-2"
+          onClick={handleSpray}
+          className="lg:col-span-5 h-[560px] sm:h-[660px] lg:h-[740px] relative flex items-center justify-center order-1 lg:order-2 cursor-pointer"
         >
           {/* Subtle Ambient Backlight Halo */}
           <div className="absolute w-[380px] h-[520px] rounded-full bg-gradient-to-b from-[#FAF4EC] via-[#EFE2D0] to-transparent opacity-85 filter blur-3xl pointer-events-none" />
 
-          {/* Large Watermark Typography BEHIND / ABOVE the Flacon */}
+          {/* Large Watermark Typography BEHIND the Flacon */}
           <div className="absolute top-2 inset-x-0 flex flex-col items-center justify-center pointer-events-none z-0">
             <span className="font-serif-luxury text-6xl sm:text-7xl lg:text-[5.5rem] tracking-[0.24em] text-[#493222]/[0.08] uppercase leading-none font-light">
               KIYORA
@@ -126,8 +212,7 @@ export default function HeroThreeCanvas() {
             </span>
           </div>
 
-          {/* Floating Luxury Annotation Markers Over the Video Atmosphere */}
-          {/* Annotation 1: Floating Cap */}
+          {/* Floating Luxury Annotation Markers */}
           <div className="absolute top-14 left-2 sm:left-4 z-20 pointer-events-none max-w-[130px] text-left hidden sm:block">
             <span className="font-mono-luxury text-[9px] text-[#8F6E45] uppercase tracking-widest block font-semibold">
               ✦ THE CROWN
@@ -137,7 +222,6 @@ export default function HeroThreeCanvas() {
             </p>
           </div>
 
-          {/* Annotation 2: Solar Mist */}
           <div className="absolute top-24 right-2 sm:right-4 z-20 pointer-events-none max-w-[130px] text-right hidden sm:block">
             <span className="font-mono-luxury text-[9px] text-[#8F6E45] uppercase tracking-widest block font-semibold">
               GOLDEN MIST ✦
@@ -147,7 +231,7 @@ export default function HeroThreeCanvas() {
             </p>
           </div>
 
-          {/* The Flacon Container with Smooth Perspective */}
+          {/* The Flacon Container with Smooth Perspective & ZERO Frame Border */}
           <div
             style={{
               transform: `perspective(1000px) rotateY(${mousePos.x}deg) rotateX(${mousePos.y}deg)`,
@@ -156,8 +240,8 @@ export default function HeroThreeCanvas() {
             className="relative w-full max-w-[460px] h-full flex items-center justify-center z-10"
           >
             {isVideoMode ? (
-              /* Frameless Seamless Video with Multi-Layered Edge Fading */
-              <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+              /* Frameless Seamless Video with Hardware-level Mask Dissolving ALL edges */
+              <div className="relative w-full h-full flex items-center justify-center">
                 <video
                   ref={videoRef}
                   src="/assets/gemini_generated_video_9721361e.mp4"
@@ -166,56 +250,57 @@ export default function HeroThreeCanvas() {
                   loop
                   muted
                   playsInline
+                  style={{
+                    // Mask dissolves all 4 edges and corners into 100% transparency
+                    WebkitMaskImage:
+                      "radial-gradient(ellipse 68% 78% at 50% 50%, black 42%, rgba(0,0,0,0.85) 58%, rgba(0,0,0,0.2) 74%, transparent 84%)",
+                    maskImage:
+                      "radial-gradient(ellipse 68% 78% at 50% 50%, black 42%, rgba(0,0,0,0.85) 58%, rgba(0,0,0,0.2) 74%, transparent 84%)",
+                  }}
                   className="w-full h-full object-contain pointer-events-none"
                 />
 
-                {/* 100% INVISIBLE EDGE VIGNETTE OVERLAYS (Melts all 4 sides & corners into #F7F0E6) */}
-                {/* 1. Radial Vignette: Dissolves corners completely */}
+                {/* Secondary Edge-Blend into #F7F0E6 background */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      "radial-gradient(ellipse 70% 70% at 50% 50%, transparent 40%, rgba(247, 240, 230, 0.55) 62%, rgba(247, 240, 230, 0.92) 80%, #F7F0E6 96%)",
-                  }}
-                />
-
-                {/* 2. Linear Edge Fades: Softens Left, Right, Top, and Bottom */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "linear-gradient(to right, #F7F0E6 0%, transparent 18%, transparent 82%, #F7F0E6 100%), linear-gradient(to bottom, #F7F0E6 0%, transparent 14%, transparent 84%, #F7F0E6 100%)",
+                      "radial-gradient(ellipse 72% 80% at 50% 50%, transparent 40%, rgba(247, 240, 230, 0.4) 60%, rgba(247, 240, 230, 0.95) 78%, #F7F0E6 92%)",
                   }}
                 />
               </div>
             ) : (
-              /* Image Fallback with same seamless edge melting */
-              <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+              /* Image Fallback for other scents */
+              <div className="relative w-full h-full flex items-center justify-center">
                 <Image
                   src={selectedFragrance.campaignImage || selectedFragrance.image}
                   alt={`${selectedFragrance.name} by Maison Kiyora`}
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                  style={{
+                    WebkitMaskImage:
+                      "radial-gradient(ellipse 70% 78% at 50% 50%, black 45%, rgba(0,0,0,0.8) 60%, transparent 82%)",
+                    maskImage:
+                      "radial-gradient(ellipse 70% 78% at 50% 50%, black 45%, rgba(0,0,0,0.8) 60%, transparent 82%)",
+                  }}
                   className="object-contain"
                 />
-
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      "radial-gradient(ellipse 70% 70% at 50% 50%, transparent 40%, rgba(247, 240, 230, 0.55) 62%, rgba(247, 240, 230, 0.92) 80%, #F7F0E6 96%)",
-                  }}
-                />
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "linear-gradient(to right, #F7F0E6 0%, transparent 18%, transparent 82%, #F7F0E6 100%), linear-gradient(to bottom, #F7F0E6 0%, transparent 14%, transparent 84%, #F7F0E6 100%)",
+                      "radial-gradient(ellipse 72% 80% at 50% 50%, transparent 42%, rgba(247, 240, 230, 0.5) 62%, rgba(247, 240, 230, 0.95) 80%, #F7F0E6 92%)",
                   }}
                 />
               </div>
             )}
+
+            {/* Live Interactive Canvas Mist Particles rendered over video */}
+            <canvas
+              ref={mistCanvasRef}
+              className="absolute inset-0 w-full h-full pointer-events-none z-15"
+            />
 
             {/* Overlaid Editorial Seal Across Bottom of Bottle */}
             <div className="absolute bottom-6 sm:bottom-10 inset-x-2 z-20 pointer-events-none flex items-center justify-center gap-3">
@@ -228,6 +313,22 @@ export default function HeroThreeCanvas() {
 
             {/* Soft contact shadow on travertine ground */}
             <div className="absolute bottom-4 w-72 h-8 bg-[#493222] opacity-15 blur-2xl rounded-full pointer-events-none" />
+          </div>
+
+          {/* Interactive Atomizer Pill */}
+          <div className="absolute bottom-3 z-20 pointer-events-none flex flex-col items-center">
+            <div className="pointer-events-auto flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF5EE]/90 backdrop-blur-md border border-champagne-subtle text-espresso font-mono-luxury text-[10px] shadow-sm transition-all duration-300 hover:scale-105 hover:bg-[#F3ECE1]">
+              <Wind className="w-3 h-3 text-champagne-dark animate-pulse" />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSpray();
+                }}
+                className="tracking-wider uppercase font-medium cursor-pointer"
+              >
+                {isSpraying ? "Releasing Mist..." : "✦ Click To Play / Mist"}
+              </button>
+            </div>
           </div>
         </div>
 

@@ -64,16 +64,16 @@ export default function Navigation() {
       <header
         className={`fixed top-8 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? "bg-[#F7F0E6]/95 backdrop-blur-md shadow-xs border-b border-champagne-subtle/40 py-3.5"
-            : "bg-[#F7F0E6]/80 backdrop-blur-sm py-5"
+            ? "bg-[#F7F0E6]/95 backdrop-blur-md shadow-xs border-b border-champagne-subtle/40 py-2.5 sm:py-3.5"
+            : "bg-[#F7F0E6]/85 backdrop-blur-sm py-3 sm:py-5"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between">
           
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden p-2 text-espresso hover:text-champagne transition-colors"
+            className="lg:hidden p-1.5 sm:p-2 text-espresso hover:text-champagne transition-colors"
             aria-label="Open menu"
           >
             <Menu className="w-5 h-5" />
@@ -102,34 +102,34 @@ export default function Navigation() {
             })}
           </nav>
 
-          {/* Center Brand Wordmark */}
+          {/* Center Brand Wordmark (Always crisp and single-line on mobile) */}
           <Link
             href="/"
-            className="flex flex-col items-center text-center group transition-transform duration-300 hover:scale-[1.01]"
+            className="flex flex-col items-center text-center group transition-transform duration-300 hover:scale-[1.01] px-1 sm:px-2"
           >
-            <span className="font-serif-luxury text-2xl lg:text-[2rem] tracking-[0.18em] uppercase text-espresso font-normal">
+            <span className="font-serif-luxury text-[17px] sm:text-2xl lg:text-[2rem] tracking-[0.15em] sm:tracking-[0.18em] uppercase text-espresso font-normal whitespace-nowrap leading-tight">
               MAISON KIYORA
             </span>
-            <span className="font-mono-luxury text-[9px] tracking-[0.38em] uppercase text-champagne-dark mt-[-2px] group-hover:text-espresso transition-colors">
+            <span className="font-mono-luxury text-[8px] sm:text-[9px] tracking-[0.22em] sm:tracking-[0.38em] uppercase text-champagne-dark mt-[-1px] group-hover:text-espresso transition-colors whitespace-nowrap">
               Slow Perfumery Art
             </span>
           </Link>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-3 lg:gap-5">
+          <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-5">
             {/* Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 text-espresso hover:text-champagne transition-colors"
+              className="p-1.5 sm:p-2 text-espresso hover:text-champagne transition-colors"
               aria-label="Search collection"
             >
               <Search className="w-4 h-4" />
             </button>
 
-            {/* Account */}
+            {/* Account (hidden on xs mobile to give maximum room to center logo, accessible in drawer) */}
             <button
               onClick={() => setIsAccountOpen(!isAccountOpen)}
-              className="p-2 text-espresso hover:text-champagne transition-colors relative"
+              className="hidden sm:block p-2 text-espresso hover:text-champagne transition-colors relative"
               aria-label="Client account"
             >
               <User className="w-4 h-4" />
@@ -138,7 +138,7 @@ export default function Navigation() {
             {/* Shopping Bag Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EFE3D3] hover:bg-beige border border-champagne-subtle transition-all"
+              className="group flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#EFE3D3] hover:bg-beige border border-champagne-subtle transition-all"
               aria-label="View shopping bag"
             >
               <div className="relative">
@@ -248,6 +248,17 @@ export default function Navigation() {
                 >
                   <span>Scent Discovery Quiz</span>
                   <Compass className="w-4 h-4 text-champagne" />
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAccountOpen(true);
+                  }}
+                  className="text-left font-serif-luxury text-2xl text-[#624D3E] hover:text-espresso transition-colors flex items-center justify-between"
+                >
+                  <span>Client Account</span>
+                  <User className="w-4 h-4 text-champagne" />
                 </button>
               </div>
             </div>
